@@ -126,14 +126,14 @@ def move():
     for point, course in ghosts: #Los fantasmas se irán moviendo
         if valid(point + course): #Siempre y cuando estén dentro del path
             point.move(course)
-        else:
+        else: #Si topan tienen 4 opciones de cambio de dirección
             options = [
                 vector(5, 0),
                 vector(-5, 0),
                 vector(0, 5),
                 vector(0, -5),
             ]
-            plan = choice(options)
+            plan = choice(options) #choice() es una función que escoge una de las cuatro opciones de vectores
             course.x = plan.x
             course.y = plan.y
 
@@ -143,26 +143,26 @@ def move():
 
     update()
 
-    for point, course in ghosts:
+    for point, course in ghosts: #Si un fantasma topa con el pacman el juego se termina
         if abs(pacman - point) < 20:
             return
 
     ontimer(move, 100)
 
-def change(x, y):
+def change(x, y): #Función que cambia la dirección en la que se mueve el pacman, si se encuentra dentro del path
     "Change pacman aim if valid."
     if valid(pacman + vector(x, y)):
         aim.x = x
         aim.y = y
 
-setup(420, 420, 370, 0)
+setup(420, 420, 370, 0) #Establece el tamaño de la ventana del juego
 hideturtle()
 tracer(False)
 writer.goto(160, 160)
-writer.color('white')
+writer.color('white') #El puntaje se imprime de color blanco
 writer.write(state['score'])
 listen()
-onkey(lambda: change(5, 0), 'Right')
+onkey(lambda: change(5, 0), 'Right') #Para mover al pacman con las teclas
 onkey(lambda: change(-5, 0), 'Left')
 onkey(lambda: change(0, 5), 'Up')
 onkey(lambda: change(0, -5), 'Down')
