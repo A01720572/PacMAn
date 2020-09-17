@@ -126,15 +126,35 @@ def move():
     for point, course in ghosts: #Los fantasmas se irán moviendo
         if valid(point + course): #Siempre y cuando estén dentro del path
             point.move(course)
+            
         else: #Si topan tienen 4 opciones de cambio de dirección
             options = [
-                vector(10, 0), #Para que los fantasmas sean mas rápidos se decidió cambiar los vectores de 5 a 10 para que cuanto topen se muevan distancias más largas en el mismo tiempo
-                vector(-10, 0),
-                vector(0, 10),
-                vector(0, -10),
+                vector(15, 0),#Para que los fantasmas sean mas rápidos se decidió cambiar los vectores de 5 a 15 para que cuanto topen se muevan distancias más largas en el mismo tiempo
+                vector(-15, 0),
+                vector(0, 15),
+                vector(0, -15),
             ]
-            plan = choice(options) #choice() es una función que escoge una de las cuatro opciones de vectores
-            course.x = plan.x
+            plan = choice(options)
+            #Las siguientes condiciones buscan en cuál cuadrante del tablero está el pacman
+            #Se decide hacia donde girará el fantasma cuando tope:
+            if ((pacman.x > 0 and course.x > 0) or (pacman.x < 0 and course.x < 0)) and pacman.y > 0:
+                plan = vector(0, 15)
+                if plan == course: #En caso de que se vuelva a repetir la direccion de donde viene, se genera una nueva
+                    plan = choice(options) #choice() es una función que escoge una de las cuatro opciones de vectores
+            elif ((pacman.x > 0 and course.x > 0) or (pacman.x < 0 and course.x < 0)) and pacman.y < 0:
+                plan = vector(0, -15)
+                if plan == course:
+                    plan = choice(options)
+            elif ((pacman.y > 0 and course.y > 0) or (pacman.y < 0 and course.y < 0)) and pacman.x > 0:
+                plan = vector(15, 0)
+                if plan == course:
+                    plan = choice(options)
+            elif ((pacman.y > 0 and course.y > 0) or (pacman.y < 0 and course.y < 0)) and pacman.x < 0:
+                plan = vector(-15, 0)
+                if plan == course:
+                    plan = choice(options)
+            #Así, los fantasmas se moverán al cuadrante en donde se encuentra el pacman y lo podrán perseguir de cierta manera
+            course.x = plan.x #Se actualiza la direccion en la que se moverán los fantasmas
             course.y = plan.y
 
         up()
