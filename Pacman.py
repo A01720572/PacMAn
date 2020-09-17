@@ -14,18 +14,18 @@ from random import choice
 from turtle import *
 from freegames import floor, vector
 
-state = {'score': 0}
+state = {'score': 0} #Puntaje inicial del pacman (cuántas bolitas se come)
 path = Turtle(visible=False)
 writer = Turtle(visible=False)
 aim = vector(5, 0)
-pacman = vector(-40, -80)
-ghosts = [
+pacman = vector(-40, -80) #Posición del pacman inicial
+ghosts = [ #Posiciones iniciales de los fantasmas
     [vector(-180, 160), vector(5, 0)],
     [vector(-180, -160), vector(0, 5)],
     [vector(100, 160), vector(0, -5)],
     [vector(100, -160), vector(-5, 0)],
 ]
-tiles = [
+tiles = [ #Tablero: los 1 representan los espacios en donde el pacman se puede mover y los 0 son los espacios en el vacío
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
     0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
@@ -48,7 +48,7 @@ tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
 
-def square(x, y):
+def square(x, y): #Función para dibujar un cuadrado que servirá para dibujar todo el tablero del juego
     "Draw square using path at (x, y)."
     path.up()
     path.goto(x, y)
@@ -61,14 +61,14 @@ def square(x, y):
 
     path.end_fill()
 
-def offset(point):
+def offset(point): #Función para posicionar los puntos, pacman y fantasmas, ajustando sus coordenadas para que queden dentro del path
     "Return offset of point in tiles."
     x = (floor(point.x, 20) + 200) / 20
     y = (180 - floor(point.y, 20)) / 20
     index = int(x + y * 20)
     return index
 
-def valid(point):
+def valid(point): #Función que delimita el path: cuando el pacman o un fantasma lleguen a una posición del tablero en 0, estos toparán
     "Return True if point is valid in tiles."
     index = offset(point)
 
@@ -82,20 +82,20 @@ def valid(point):
 
     return point.x % 20 == 0 or point.y % 20 == 0
 
-def world():
+def world(): #Función que colorea el tablero
     "Draw world using path."
-    bgcolor('black')
-    path.color('blue')
+    bgcolor('black') #El color del fondo será negro
+    path.color('blue') #El color del path (donde las figuras sí se pueden mover) será azul
 
     for index in range(len(tiles)):
         tile = tiles[index]
 
-        if tile > 0:
+        if tile > 0: #En caso de que el pacman haya comido un punto, se vuelve a dibujar un cuadrado para quitar el punto
             x = (index % 20) * 20 - 200
             y = 180 - (index // 20) * 20
-            square(x, y)
+            square(x, y) #Dibuja un cuadrado con las coordenadas y la función square()
 
-            if tile == 1:
+            if tile == 1: #Si la posición del tablero es 1, se le agregan unos puntos blancos (la comida del pacman)
                 path.up()
                 path.goto(x + 10, y + 10)
                 path.dot(2, 'white')
@@ -107,24 +107,24 @@ def move():
 
     clear()
 
-    if valid(pacman + aim):
+    if valid(pacman + aim): #Si no topa con los espacios en negro, el pacman se seguirá moviendo
         pacman.move(aim)
 
     index = offset(pacman)
 
-    if tiles[index] == 1:
-        tiles[index] = 2
-        state['score'] += 1
+    if tiles[index] == 1: #Si llega a un espacio en donde hay comida:
+        tiles[index] = 2 #Ahora ese espacio tendrá el valor de 2 porque no es un espacio negro, pero tampoco uno que contiene comida
+        state['score'] += 1 #Se aumenta un punto al puntaje
         x = (index % 20) * 20 - 200
         y = 180 - (index // 20) * 20
-        square(x, y)
+        square(x, y) #Se vuelve a dibujar el cuadrado para cubrir el punto blanco
 
     up()
     goto(pacman.x + 10, pacman.y + 10)
-    dot(20, 'yellow')
+    dot(20, 'yellow') #El dot es la figura del pacman
 
-    for point, course in ghosts:
-        if valid(point + course):
+    for point, course in ghosts: #Los fantasmas se irán moviendo
+        if valid(point + course): #Siempre y cuando estén dentro del path
             point.move(course)
         else:
             options = [
@@ -139,7 +139,7 @@ def move():
 
         up()
         goto(point.x + 10, point.y + 10)
-        dot(20, 'red')
+        dot(20, 'red') #El dot rojo es la figura que representa a los fantasmas
 
     update()
 
